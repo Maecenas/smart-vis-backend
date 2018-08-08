@@ -1,0 +1,37 @@
+{
+  "name": "smartvis-datastore",
+  "version": "1.0.0",
+  "description": "The storage backend for smart-vis program",
+  "main": "./src/app.js",
+  "dependencies": {
+    "koa": "^2.5.2",
+    "koa-cors": "0.0.16",
+    "koa-logger": "^3.2.0",
+    "koa-parser": "^1.0.5",
+    "koa-passport": "^4.1.0",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.8.2",
+    "mysql2": "^1.6.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^4.38.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.1.0"
+  },
+  "scripts": {
+    "start": "node ./src/app.js",
+    "precommit": "lint-staged",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "lint-staged": "eslint `git diff --staged --diff-filter=AM --name-only | grep .js$ | tr '\n' ' '`",
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/nyushvislab/smartvis-datastore-v1.0/"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://bitbucket.org/nyushvislab/smartvis-datastore-v1.0/issues"
+  },
+  "homepage": "https://bitbucket.org/nyushvislab/smartvis-datastore-v1.0#readme"
+}
