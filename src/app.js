@@ -1,11 +1,13 @@
 'use strict';
 
 const Koa = require('koa');
-const defaultConf = require('../config/default');
 const bodyParser = require('koa-parser');
 const cors = require('koa-cors');
 const logger = require('koa-logger');
 const sessionWare = require('koa-session');
+const env = require('../config/default').env;
+const router = require('./middlewares/router');
+const passport = require('./controllers/auth');
 const app = new Koa();
 
 app.use(logger());
@@ -19,9 +21,8 @@ app.use(sessionWare({
   // store: sessionStorage
 }, app));
 
-const passport = require('./controllers/auth');
-app.use(passport.initialize())
-  .use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Log HTTP request
 app.use(async (ctx, next) => {
@@ -32,14 +33,15 @@ app.use(async (ctx, next) => {
 });
 
 // Add router
-const router = require('./middlewares/routes');
-app.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes());
+app.use(router.allowedMethods());
 
 router.all('404', '*', ctx => {
   ctx.throw(404);
 });
 
 
-app.listen(defaultConf.port);
-console.log(`listening on ${defaultConf.port}`);
+app.listen(env.PORT, () => {
+  console.log(`listening on ${env.PORT}`);
+});
 module.exports = app;

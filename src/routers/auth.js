@@ -6,12 +6,12 @@ const User = require('../models/user');
 const validator = require('../utils/validator');
 const fp = require('../utils/functional');
 
-const auth = Router();
+const auth = new Router();
 
 const userFields = ['id', 'username', 'mail'];
 
 // POST /signup
-auth.post('/signup', async (ctx) => {
+auth.post('signup', '/signup', async (ctx) => {
   try {
     let body = ctx.request.body;
     let foundUser = await User.findOne({ where: { mail: body.mail } });
@@ -32,7 +32,7 @@ auth.post('/signup', async (ctx) => {
 });
 
 // POST /login
-auth.post('/login', (ctx, next) => {
+auth.post('login', '/login', (ctx, next) => {
   if (ctx.isAuthenticated()) {
     ctx.body = { success: true, info: { message: 'Already logged in' } };
     return ctx;
@@ -62,40 +62,31 @@ auth.post('/login', (ctx, next) => {
 });
 
 // GET /logout
-auth.get('/logout', ctx => {
+auth.get('logout', '/logout', ctx => {
   ctx.body = { auth: ctx.isAuthenticated() };
   ctx.logout();
 });
 
 // POST /microsoft
-auth.post('/microsoft', async (ctx) => {
+auth.post('microsoft', '/microsoft', async (ctx) => {
   try {
-    let body = ctx.request.body;
-    let foundUser = await User.findOne({ where: { microsoftId: body.microsoft_id } });
+    let params = ctx.request.body;
+    let foundUser = await User.findOne({ where: { microsoftId: params.microsoft_id } });
     if (foundUser) {
       let userFiltered = fp.filter(foundUser.dataValues, userFields);
       ctx.body = { success: true, user: userFiltered, info: { message: 'Welcome back' } };
     } else {
       let user = await User.create({
-        username: body.username,
-        mail: body.mail,
+        username: params.username,
+        mail: params.mail,
         passwordHashcode: validator.hash(Math.random().toString(36).slice(-8)),
-        microsoftId: body.microsoft_id
+        microsoftId: params.microsoft_id
       });
       let userFiltered = fp.filter(user.dataValues, userFields);
       ctx.body = { success: true, user: userFiltered, info: { message: 'Welcome to join us' } };
     }
   } catch (err) {
     ctx.throw(400, { err: err });
-  }
-});
-
-// @login_required
-auth.use('/api/*', (ctx, next) => {
-  if (ctx.isAuthenticated()) {
-    next();
-  } else {
-    ctx.throw(401, 'Login Required');
   }
 });
 
