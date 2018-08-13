@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const dbConf = require('../../config/default.js').database;
+const db = require('../../config/default.js').database;
 
 /**
  * 连接指定类型的数据库
@@ -12,8 +12,8 @@ const dbConf = require('../../config/default.js').database;
  * @type {Sequelize}
  */
 
-module.exports = new Sequelize(dbConf.DATABASE, dbConf.USER, dbConf.PASSWORD, {
-  host: dbConf.HOST,
+module.exports = new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
+  host: db.HOST,
   dialect: 'mysql',
   dialectOptions: {
     charset: 'utf8mb4',

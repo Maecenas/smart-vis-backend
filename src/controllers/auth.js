@@ -9,7 +9,7 @@ const User = require('../models/user');
 passport.serializeUser((user, done) => {
   try {
     if (user) {
-      done(null, user.dataValues.id || user.id);
+      done(null, user);
     } else {
       done(null);
     }
@@ -19,9 +19,8 @@ passport.serializeUser((user, done) => {
 });
 
 // Deseralize when "auth":{"user":*} exists in the session in connection
-passport.deserializeUser(async (userId, done) => {
+passport.deserializeUser(async (user, done) => {
   try {
-    let user = await User.findById(userId);
     if (user) {
       done(null, user);
     } else {
@@ -38,7 +37,7 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
 }, async (mail, password, done) => {
   try {
-    let user = await User.findOne({ where: { mail: mail } });
+    let user = await User.findOne({ where: { mail } });
     if (!user) {
       return done(null, false, { message: 'Incorrect username.' });
     }

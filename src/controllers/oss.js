@@ -54,18 +54,17 @@ function getUserPolicy(userID) {
         'oss:AbortMultipartUpload',
         'oss:PutObject'
       ],
-      Resource: `acs:oss:*:*:smartvis-test/${userID}/`
+      Resource: `acs:oss:*:*:smartvis-test/${userID}/*`
     }]
   };
 }
 
-stsClient.grantUser = async function ({ userID, timeout } = {}) {
+OSS.STS.prototype.grantUser = async function ({ userID, timeout } = {}) {
   try {
     const policy = getUserPolicy(userID);
     const sessionName = userID.replace(/-/g, '');
     return await stsClient.assumeRole(oss.sts.ROLE_ARN, policy, timeout, sessionName);
   } catch (err) {
-    console.log(err);
-    return { err: err };
+    throw new Error(err.message);
   }
 };

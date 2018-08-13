@@ -27,14 +27,15 @@ api.get('getUserToken', '/user/:userID/token', async function (ctx) {
   try {
     let userID = ctx.params.userID;
     let timeout = ctx.params.timeout || 3600;
-    let response = await client.grantUser({ userID: userID, timeout: timeout });
+    let response = await client.grantUser({ userID, timeout });
     if (response) {
       ctx.body = {
         success: true,
         accessToken: response.credentials,
         oss: {
           region: oss.REGION,
-          bucket: oss.BUCKET
+          bucket: oss.BUCKET,
+          roleArn: oss.sts.ROLE_ARN
         }
       };
     } else {
@@ -42,7 +43,7 @@ api.get('getUserToken', '/user/:userID/token', async function (ctx) {
       console.log('[ERR]', response);
     }
   } catch (err) {
-    ctx.throw(400, { err: err });
+    ctx.throw(400, { err });
   }
 });
 

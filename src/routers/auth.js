@@ -27,7 +27,7 @@ auth.post('signup', '/signup', async (ctx) => {
       ctx.body = { success: true, user: userFiltered };
     }
   } catch (err) {
-    ctx.throw(400, { err: err });
+    ctx.throw(400, { err });
   }
 });
 
@@ -86,7 +86,7 @@ auth.post('microsoft', '/microsoft', async (ctx) => {
       ctx.body = { success: true, user: userFiltered, info: { message: 'Welcome to join us' } };
     }
   } catch (err) {
-    ctx.throw(400, { err: err });
+    ctx.throw(400, { err });
   }
 });
 

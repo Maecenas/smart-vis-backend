@@ -2,7 +2,7 @@
 
 const Koa = require('koa');
 const bodyParser = require('koa-parser');
-const cors = require('koa-cors');
+const cors = require('@koa/cors');
 const logger = require('koa-logger');
 const sessionWare = require('koa-session');
 const env = require('../config/default').env;
