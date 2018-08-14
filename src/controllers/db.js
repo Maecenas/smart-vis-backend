@@ -13,20 +13,27 @@ const db = require('../../config/default.js').database;
  */
 
 module.exports = new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
-  host: db.HOST,
   dialect: 'mysql',
+  host: db.HOST,
+  port: db.PORT || 3306,
+  logging: db.LOGGING || console.log,
   dialectOptions: {
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_unicode_ci',
     supportBigNumbers: true,
     bigNumberStrings: true
   },
+  define: {
+    underscored: true,
+    freezeTableName: true,
+    timestamps: false,
+    dialectOptions: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci'
+    }
+  },
+  sync: { force: false },
   pool: {
     max: 5,
     min: 0,
     idle: 30000
-  },
-  define: {
-    timestamps: false
   }
 });
