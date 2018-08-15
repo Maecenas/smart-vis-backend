@@ -59,7 +59,7 @@ function getUserPolicy(userID) {
   };
 }
 
-OSS.STS.prototype.grantUser = async function ({ userID, timeout } = {}) {
+OSS.STS.prototype.grantUser = async function ({ userID, timeout = 3600 } = {}) {
   try {
     const policy = getUserPolicy(userID);
     const sessionName = userID.replace(/-/g, '');

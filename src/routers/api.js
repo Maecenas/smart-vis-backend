@@ -25,9 +25,7 @@ api.all('requireOwner', '/user/:userID/*', async (ctx, next) => {
 
 api.get('getUserToken', '/user/:userID/token', async function (ctx) {
   try {
-    let userID = ctx.params.userID;
-    let timeout = ctx.params.timeout || 3600;
-    let response = await client.grantUser({ userID, timeout });
+    let response = await client.grantUser(ctx.params);
     if (response) {
       ctx.body = {
         success: true,
