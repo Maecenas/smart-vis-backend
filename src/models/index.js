@@ -9,16 +9,20 @@ const Bookmark = sequelize.import(__dirname + '/bookmark');
 
 (async () => {
   try {
-    await sequelize.sync({ force: true, match: /_test$/ });
-    let alterQueries = [
-      'ALTER TABLE `bookmark` MODIFY `project_id` CHAR(36) NOT NULL',
-      'ALTER TABLE `data` MODIFY `project_id` CHAR(36) NOT NULL',
-      'ALTER TABLE `dimension` MODIFY `data_id` CHAR(36) NOT NULL',
-      'ALTER TABLE `project` MODIFY `user_id` CHAR(36) NOT NULL'
-    ].map(query => {
-      sequelize.query(query);
-    });
-    await Promise.all(alterQueries);
+    if (sequelize.config.database.match(/_test$/)) {
+      await sequelize.sync({ force: true });
+      let alterQueries = [
+        'ALTER TABLE `bookmark` MODIFY `project_id` CHAR(36) NOT NULL',
+        'ALTER TABLE `data` MODIFY `project_id` CHAR(36) NOT NULL',
+        'ALTER TABLE `dimension` MODIFY `data_id` CHAR(36) NOT NULL',
+        'ALTER TABLE `project` MODIFY `user_id` CHAR(36) NOT NULL'
+      ].map(query => {
+        sequelize.query(query);
+      });
+      await Promise.all(alterQueries);
+    } else {
+      await sequelize.sync({ force: false });
+    }
   } catch (err) {
     throw err;
   }
