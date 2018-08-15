@@ -1,42 +1,53 @@
 'use strict';
 
-const Sequelize = require('sequelize');
-const sequelize = require('../controllers/db.js');
-
-let User = sequelize.define('user', {
-  id: {
-    type: Sequelize.STRING(40),
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: Sequelize.UUIDV4
-  },
-  username: {
-    type: Sequelize.STRING(40),
-    allowNull: false
-  },
-  mail: {
-    type: Sequelize.STRING(40),
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true
+module.exports = (sequelize, DataTypes) => {
+  return sequelize.define('user', {
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false,
+      defaultValue: DataTypes.UUIDV4
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    mail: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true
+      }
+    },
+    passwordHashcode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'password_hashcode'
+    },
+    microsoftId: {
+      type: DataTypes.UUID,
+      unique: true,
+      field: 'microsoft_id'
+    },
+    industry: {
+      type: DataTypes.STRING
+    },
+    company: {
+      type: DataTypes.STRING
+    },
+    isEducational: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'is_educational'
     }
-  },
-  passwordHashcode: {
-    type: Sequelize.STRING(40),
-    allowNull: false,
-    field: 'password_hashcode'
-  },
-  microsoftId: {
-    type: Sequelize.STRING(40),
-    unique: true,
-    field: 'microsoft_id'
-  }
-}, {
-  freezeTableName: true,
-  timestamps: false
-});
-
-User.sync({ force: false });
-
-module.exports = User;
+  }, {
+    charset: 'utf8mb4',
+    collate: 'utf8mb4_unicode_ci',
+    freezeTableName: true,
+    paranoid: true,
+    timestamps: false,
+    underscored: true
+  });
+};

@@ -2,7 +2,7 @@
 
 const passport = require('koa-passport');
 const validator = require('../utils/validator');
-const User = require('../models/user');
+const { User } = require('../models');
 
 
 // Serialize when doing ctx.login()

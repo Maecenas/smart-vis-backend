@@ -16,19 +16,20 @@ module.exports = new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
   dialect: 'mysql',
   host: db.HOST,
   port: db.PORT || 3306,
-  logging: db.LOGGING || console.log,
+  logging: db.LOGGING === false ? false : db.LOGGING || console.log,
   dialectOptions: {
     supportBigNumbers: true,
     bigNumberStrings: true
   },
   define: {
-    underscored: true,
-    freezeTableName: true,
-    timestamps: false,
     dialectOptions: {
       charset: 'utf8mb4',
       collate: 'utf8mb4_unicode_ci'
-    }
+    },
+    freezeTableName: true,
+    paranoid: true,
+    timestamps: true,
+    underscored: true
   },
   sync: { force: false },
   pool: {

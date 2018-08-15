@@ -2,7 +2,7 @@
 
 const Router = require('koa-router');
 const passport = require('../controllers/auth');
-const User = require('../models/user');
+const { User } = require('../models');
 const validator = require('../utils/validator');
 const fp = require('../utils/functional');
 
