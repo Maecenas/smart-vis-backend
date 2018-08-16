@@ -1,7 +1,12 @@
+/* eslint-disable camelcase */
 'use strict';
 
+const fp = require('../utils/functional');
+const validator = require('../utils/validator');
+const userFieldsFilter = ['id', 'username', 'mail'];
+
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('user', {
+  let User = sequelize.define('user', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -20,15 +25,13 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: true
       }
     },
-    passwordHashcode: {
+    password: {
       type: DataTypes.STRING,
-      allowNull: false,
-      field: 'password_hashcode'
+      allowNull: false
     },
-    microsoftId: {
+    microsoft_id: {
       type: DataTypes.UUID,
-      unique: true,
-      field: 'microsoft_id'
+      unique: true
     },
     industry: {
       type: DataTypes.STRING
@@ -47,7 +50,19 @@ module.exports = (sequelize, DataTypes) => {
     collate: 'utf8mb4_unicode_ci',
     freezeTableName: true,
     paranoid: true,
-    timestamps: false,
-    underscored: true
+    timestamps: true,
+    underscored: true,
+    setterMethods: {
+      password(value) {
+        this.setDataValue('password', validator.hash(value));
+      }
+    }
   });
+  User.findByMail = async function (mail) {
+    return await this.findOne({ where: { mail } });
+  };
+  User.prototype.getFiltered = function () {
+    return fp.filter(this.get({ plain: true }), userFieldsFilter);
+  };
+  return User;
 };

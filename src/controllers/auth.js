@@ -37,16 +37,16 @@ passport.use(new LocalStrategy({
   passwordField: 'password'
 }, async (mail, password, done) => {
   try {
-    let user = await User.findOne({ where: { mail } });
+    let user = await User.findByMail(mail);
     if (!user) {
-      return done(null, false, { message: 'Incorrect username.' });
+      return done(null, false, { msg: 'Incorrect username.' });
     }
-    if (!validator.validate(password, user.passwordHashcode)) {
-      return done(null, false, { message: 'Incorrect password.' });
+    if (!validator.validate(password, user.password)) {
+      return done(null, false, { msg: 'Incorrect password.' });
     }
     return done(null, user);
   } catch (err) {
-    return done(null, false, { message: err.message });
+    return done(null, false, { msg: err.message });
   }
 }));
 

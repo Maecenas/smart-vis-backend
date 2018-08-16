@@ -5,7 +5,7 @@ let hashFunc = function () {
   return crypto.createHash('md5');
 };
 
-function getPasswordHash(password, passwordSalt) {
+function getPasswordHash(password = Math.random().toString(36).slice(-8), passwordSalt) {
   if (passwordSalt) {
     return {
       hashCode: hashFunc().update(`${password}:${passwordSalt}`).digest('hex'),
