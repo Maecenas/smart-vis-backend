@@ -1,7 +1,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const db = require('../../config/default.js').database;
+const { database: db } = require('../../config/default');
 
 /**
  * 连接指定类型的数据库

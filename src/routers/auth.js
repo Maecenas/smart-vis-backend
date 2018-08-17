@@ -18,7 +18,7 @@ auth.post('signup', '/signup', async (ctx) => {
       ctx.body = { success: true, user: user.getFiltered() };
     }
   } catch (err) {
-    ctx.throw(400, { err });
+    ctx.throw(400, err);
   }
 });
 
@@ -27,13 +27,13 @@ auth.post('login', '/login', (ctx, next) => {
     ctx.body = { success: true, info: { msg: 'Already logged in' } };
     return ctx;
   }
-  return passport.authenticate('local', (err, user, info) => {
+  return passport.authenticate('local', async (err, user, info) => {
     if (!user) {
       ctx.body = { success: false, info: info, user: null };
       return ctx;
     }
     ctx.body = { success: true, user: user.getFiltered() };
-    return ctx.login(user);
+    return await ctx.login(user);
   })(ctx, next);
 });
 
@@ -56,7 +56,7 @@ auth.post('microsoft', '/microsoft', async (ctx) => {
     if (created) {
       ctx.status = 201;
     }
-    return ctx.login(user);
+    return await ctx.login(user);
   } catch (err) {
     ctx.throw(400, err);
   }
