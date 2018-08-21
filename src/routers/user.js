@@ -10,14 +10,17 @@ const user = new Router({
   prefix: '/user'
 });
 
-user.all('requireOwner', '/:userID', async (ctx, next) => {
-  let userID = ctx.params.userID;
-  if (ctx.state.user.id === userID) {
-    await next();
-  } else {
-    ctx.throw(403, 'Not authorized');
-  }
+user.get('/', async (ctx) => {
+  ctx.redirect(ctx.router.url('getUser', { userID: ctx.state.user.id }));
 })
+  .all('requireOwner', '/:userID', async (ctx, next) => {
+    let userID = ctx.params.userID;
+    if (ctx.state.user.id === userID) {
+      await next();
+    } else {
+      ctx.throw(403, 'Not authorized');
+    }
+  })
   .get('getUser', '/:userID', async (ctx) => {
     try {
       let userID = ctx.params.userID;
@@ -47,27 +50,7 @@ user.all('requireOwner', '/:userID', async (ctx, next) => {
       ctx.body = { msg: err.original.message || err.message };
     }
   })
-  .put('putUser', '/:userID', async (ctx) => {
-    try {
-      let [, affectedRows] = await User.update(ctx.request.body, {
-        where: {
-          id: {
-            [Op.eq]: ctx.params.userID
-          }
-        }
-      });
-      if (affectedRows === 1) {
-        ctx.body = { success: true };
-        ctx.logout();
-      } else {
-        ctx.body = { success: false };
-      }
-    } catch (err) {
-      ctx.status = 400;
-      ctx.body = { msg: err.original.message || err.message };
-    }
-  })
-  .del('delUser', '/:userID', async (ctx) => {
+  .delete('deleteUser', '/:userID', async (ctx) => {
     try {
       let affectedRows = await User.destroy({
         where: {

@@ -11,7 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     dataId: {
       type: DataTypes.UUID,
       allowNull: false,
-      field: 'data_ids'
+      field: 'data_id',
+      references: {
+        model: 'data',
+        key: 'id'
+      }
     },
     label: {
       type: DataTypes.STRING,

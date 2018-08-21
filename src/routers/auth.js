@@ -47,7 +47,7 @@ auth.post('signup', '/signup', async (ctx) => {
       params.password = params.password || null;
       let [user, created] = await User.findOrCreate({
         where: {
-          microsoft_id: {
+          microsoftId: {
             [Op.eq]: params.microsoft_id
           }
         },
