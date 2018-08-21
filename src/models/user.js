@@ -1,9 +1,6 @@
-/* eslint-disable camelcase */
 'use strict';
 
-const fp = require('../utils/functional');
 const validator = require('../utils/validator');
-const userFieldsFilter = ['id', 'username', 'mail'];
 
 module.exports = (sequelize, DataTypes) => {
   let User = sequelize.define('user', {
@@ -29,8 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    microsoft_id: {
+    microsoftId: {
       type: DataTypes.UUID,
+      field: 'microsoft_id',
       unique: true
     },
     industry: {
@@ -59,10 +57,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
   User.findByMail = async function (mail) {
-    return await this.findOne({ where: { mail } });
+    return await this.findOne({
+      where: {
+        mail: {
+          [sequelize.Op.eq]: mail
+        }
+      }
+    });
   };
-  User.prototype.getFiltered = function () {
-    return fp.filter(this.get({ plain: true }), userFieldsFilter);
-  };
+  User.prototype.filter = ['id', 'username', 'mail', 'created_at', 'updated_at'];
   return User;
 };

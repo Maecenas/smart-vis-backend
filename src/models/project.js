@@ -1,7 +1,8 @@
+/* eslint-disable max-len */
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('project', {
+  let Project = sequelize.define('project', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -50,4 +51,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
+  Project.prototype.filter = ['id', 'component', 'title', 'description', 'state', 'isPublic', 'created_at', 'updated_at'];
+  return Project;
 };

@@ -1,8 +1,8 @@
 'use strict';
 
 const Router = require('koa-router');
-const auth = require('../routers/auth');
-const api = require('../routers/api');
+const auth = require('./auth');
+const api = require('./api');
 
 const router = new Router();
 

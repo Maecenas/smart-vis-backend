@@ -12,29 +12,31 @@ const { database: db } = require('../../config/default');
  * @type {Sequelize}
  */
 
-module.exports = new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
-  dialect: 'mysql',
-  host: db.HOST,
-  port: db.PORT || 3306,
-  logging: db.LOGGING === false ? false : db.LOGGING || console.log,
-  dialectOptions: {
-    supportBigNumbers: true,
-    bigNumberStrings: true
-  },
-  define: {
+module.exports = {
+  sequelize: new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
+    dialect: 'mysql',
+    host: db.HOST,
+    port: db.PORT || 3306,
+    logging: db.LOGGING === false ? false : db.LOGGING || console.log,
     dialectOptions: {
-      charset: 'utf8mb4',
-      collate: 'utf8mb4_unicode_ci'
+      supportBigNumbers: true,
+      bigNumberStrings: true
     },
-    freezeTableName: true,
-    paranoid: true,
-    timestamps: true,
-    underscored: true
-  },
-  sync: { force: false },
-  pool: {
-    max: 5,
-    min: 0,
-    idle: 30000
-  }
-});
+    define: {
+      dialectOptions: {
+        charset: 'utf8mb4',
+        collate: 'utf8mb4_unicode_ci'
+      },
+      freezeTableName: true,
+      paranoid: true,
+      timestamps: true,
+      underscored: true
+    },
+    sync: { force: false },
+    pool: {
+      max: 5,
+      min: 0,
+      idle: 30000
+    }
+  })
+};

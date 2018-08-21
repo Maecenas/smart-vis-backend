@@ -1,11 +1,25 @@
 'use strict';
 
-const sequelize = require('../controllers/db');
+const { sequelize, sequelize: { Op } } = require('../controllers/db');
+const fp = require('../utils/functional');
 const User = sequelize.import(__dirname + '/user');
 const Project = sequelize.import(__dirname + '/project');
 const Data = sequelize.import(__dirname + '/data');
 const Dimension = sequelize.import(__dirname + '/dimension');
 const Bookmark = sequelize.import(__dirname + '/bookmark');
+
+sequelize.Model.prototype.getFiltered = function (filter = this.filter) {
+  return fp.filter(this.get({ plain: true }), filter);
+};
+
+Project.belongsTo(User, { constraints: false });
+User.hasMany(Project, { constraints: false });
+Data.belongsTo(Project, { constraints: false });
+Project.hasMany(Data, { constraints: false });
+Dimension.belongsTo(Data, { constraints: false });
+Data.hasMany(Dimension, { constraints: false });
+Bookmark.belongsTo(Project, { constraints: false });
+Project.hasMany(Bookmark, { constraints: false });
 
 (async () => {
   try {
@@ -29,13 +43,4 @@ const Bookmark = sequelize.import(__dirname + '/bookmark');
   }
 })();
 
-Project.belongsTo(User, { constraints: false });
-User.hasMany(Project, { constraints: false });
-Data.belongsTo(Project, { constraints: false });
-Project.hasMany(Data, { constraints: false });
-Dimension.belongsTo(Data, { constraints: false });
-Data.hasMany(Dimension, { constraints: false });
-Bookmark.belongsTo(Project, { constraints: false });
-Project.hasMany(Bookmark, { constraints: false });
-
-module.exports = { Bookmark, Data, Dimension, Project, User };
+module.exports = { Bookmark, Data, Dimension, Project, User, Op };

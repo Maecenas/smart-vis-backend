@@ -6,7 +6,7 @@ const cors = require('@koa/cors');
 const logger = require('koa-logger');
 const sessionWare = require('koa-session');
 const { env } = require('../config/default');
-const router = require('./middlewares/router');
+const router = require('./routers');
 const passport = require('./controllers/auth');
 const app = new Koa();
 
@@ -35,11 +35,6 @@ app.use(async (ctx, next) => {
 // Add router
 app.use(router.routes());
 app.use(router.allowedMethods());
-
-router.all('404', '*', ctx => {
-  ctx.throw(404);
-});
-
 
 app.listen(env.PORT, () => {
   console.log(`listening on ${env.PORT}`);
