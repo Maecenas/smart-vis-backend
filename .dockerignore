@@ -3,3 +3,11 @@ config
 *.log
 logs
 log
+nginx
+
+.DS_Store
+docs
+helper.js
+patches
+package-lock.json
+

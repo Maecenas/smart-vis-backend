@@ -2,10 +2,9 @@ version: "3"
 services:
   db:
     image: mysql:5.7
-    container_name: smartvis_mysql
+    restart: always
     volumes:
       - ~/databases/smartvis/mysql:/var/lib/mysql
-    restart: always
     ports:
       - 3306:3306
     environment:
@@ -15,8 +14,7 @@ services:
       MYSQL_PASSWORD: smartvis
   node:
     build: .
-    image: idvbxlab/smartvis-backend:alpine
-    container_name: smartvis_node
+    image: registry.cn-hangzhou.aliyuncs.com/smartvis/smartvis-backend:alpine
     restart: always
     volumes:
       - ./config:/usr/src/app/config:ro
@@ -24,3 +22,11 @@ services:
       - 8080:8080
     depends_on:
       - db
+  nginx:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./nginx:/etc/nginx:ro
+    ports:
+      - 80:80
+      - 443:443
