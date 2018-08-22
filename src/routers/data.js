@@ -33,7 +33,7 @@ data.get('getData', '/', async (ctx) => {
     try {
       let params = ctx.request.body;
       params.projectId = ctx.params.projectID;
-      let datum = await Data.create(params, { include: ['dimensions'] });
+      let datum = await Data.create(params);
       ctx.body = { success: true, data: datum.getFiltered() };
     } catch (err) {
       ctx.throw(400, err);
@@ -41,22 +41,12 @@ data.get('getData', '/', async (ctx) => {
   })
   .get('getDatum', '/:dataID', async (ctx) => {
     try {
-      let datum = await Data.findOne({
-        where: {
-          id: {
-            [Op.eq]: ctx.params.dataID
-          }
-        },
-        include: ['dimensions']
-      });
+      let datum = await Data.findById(ctx.params.dataID);
       if (datum) {
         ctx.body = {
           success: true,
           data: datum
-            && datum.getFiltered() || null,
-          dimension: datum
-            && datum.dimensions
-            && datum.dimensions.map(_ => _.getFiltered()) || null
+            && datum.getFiltered() || null
         };
       } else {
         ctx.body = { success: false };

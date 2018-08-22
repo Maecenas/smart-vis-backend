@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
     },
+    dimensions: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
     dataUrl: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -40,6 +44,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
-  Data.prototype.filter = ['id', 'dataUrl', 'created_at', 'updated_at'];
+  Data.prototype.filter = ['id', 'dataUrl', 'dimensions', 'created_at', 'updated_at'];
   return Data;
 };
