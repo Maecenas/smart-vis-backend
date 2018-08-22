@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('data', {
+  let Data = sequelize.define('data', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -40,4 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
+  Data.prototype.filter = ['id', 'dataUrl', 'created_at', 'updated_at'];
+  return Data;
 };

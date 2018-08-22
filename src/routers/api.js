@@ -3,6 +3,7 @@
 const Router = require('koa-router');
 const user = require('./user');
 const project = require('./project');
+const data = require('./data');
 const api = new Router();
 
 api.all('requireLogin', '/*', async (ctx, next) => {
@@ -13,6 +14,7 @@ api.all('requireLogin', '/*', async (ctx, next) => {
   }
 });
 
+project.use('/:projectID', data.routes(), data.allowedMethods());
 user.use('/:userID', project.routes(), project.allowedMethods());
 api.use(user.routes(), user.allowedMethods());
 
