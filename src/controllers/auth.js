@@ -9,7 +9,7 @@ const { User } = require('../models');
 passport.serializeUser((user, done) => {
   try {
     if (user) {
-      done(null, user);
+      done(null, user.getFiltered());
     } else {
       done(null);
     }

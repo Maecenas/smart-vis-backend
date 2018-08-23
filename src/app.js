@@ -11,7 +11,9 @@ const passport = require('./controllers/auth');
 const app = new Koa();
 
 app.use(logger());
-app.use(cors());
+app.use(cors({
+  credentials: true
+}));
 // app.proxy = true;
 app.use(bodyParser());
 app.keys = ['secret'];

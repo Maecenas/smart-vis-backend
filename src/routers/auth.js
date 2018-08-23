@@ -23,7 +23,11 @@ auth.post('signup', '/signup', async (ctx) => {
 })
   .post('login', '/login', (ctx, next) => {
     if (ctx.isAuthenticated()) {
-      ctx.body = { success: true, info: { msg: 'Already logged in' } };
+      ctx.body = {
+        success: true,
+        user: ctx.state.user,
+        info: { msg: 'Already logged in' }
+      };
       return ctx;
     }
     return passport.authenticate('local', async (err, user, info) => {
@@ -36,7 +40,7 @@ auth.post('signup', '/signup', async (ctx) => {
     })(ctx, next);
   })
   .get('logout', '/logout', ctx => {
-    ctx.body = { auth: ctx.isAuthenticated() };
+    ctx.body = { auth: ctx.isAuthenticated(), user: ctx.state.user };
     ctx.logout();
   })
   .post('microsoft', '/microsoft', async (ctx) => {
@@ -48,7 +52,7 @@ auth.post('signup', '/signup', async (ctx) => {
       let [user, created] = await User.findOrCreate({
         where: {
           microsoftId: {
-            [Op.eq]: params.microsoft_id
+            [Op.eq]: params.microsoftId
           }
         },
         defaults: params

@@ -24,8 +24,10 @@ user.get('/', async (ctx) => {
   .get('getUser', '/:userID', async (ctx) => {
     try {
       let userID = ctx.params.userID;
-      let user = await User.findById(userID);
-      ctx.body = { success: true, user: user.getFiltered() };
+      ctx.body = {
+        success: true,
+        user: ctx.state.user || await User.findById(userID).getFiltered()
+      };
     } catch (err) {
       ctx.throw(400, err);
     }
