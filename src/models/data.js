@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     freezeTableName: true,
     indexes: [
       {
-        fields: ['project_id'],
+        fields: [{ attribute: 'project_id', length: 5 }],
         name: 'project_id'
       }
     ],
