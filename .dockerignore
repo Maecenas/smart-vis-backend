@@ -1,13 +1,12 @@
-node_modules
+**/node_modules
 config
 *.log
 logs
 log
 nginx
 
-.DS_Store
+**/*.DS_Store
 docs
 helper.js
 patches
 package-lock.json
-

@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('bookmark', {
+  let Bookmark = sequelize.define('bookmark', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
@@ -44,4 +44,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
+  Bookmark.prototype.filter = ['id', 'dataId', 'component', 'state', 'created_at', 'updated_at'];
+  return Bookmark;
 };
