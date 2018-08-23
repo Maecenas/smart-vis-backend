@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
@@ -26,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    note: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     state: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -44,6 +49,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
-  Bookmark.prototype.filter = ['id', 'dataId', 'component', 'state', 'created_at', 'updated_at'];
+  Bookmark.prototype.filter = ['id', 'dataId', 'component', 'note', 'state', 'created_at', 'updated_at'];
   return Bookmark;
 };
