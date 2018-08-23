@@ -16,51 +16,46 @@ project.use('*', async (ctx, next) => {
 })
   .get('getProjects', '/', async (ctx) => {
     let page = Math.max(Number.parseInt(ctx.query.page, 10) || 0, 1);
-    let queryOffset;
-    let queryLimit;
+    let offset;
+    let limit;
     if (page !== 1) {
-      queryOffset = page * 8 - 9;
-      queryLimit = 8;
+      offset = page * 8 - 9;
+      limit = 8;
     } else {
-      queryOffset = 0;
-      queryLimit = 7;
+      offset = 0;
+      limit = 7;
+    }
+    let query = {
+      where: {
+      },
+      offset,
+      limit,
+      order: [['updated_at', 'DESC']]
+    };
+    if (ctx.query.keywords) {
+      query.where[Op.or] = [
+        { title: { [Op.like]: `%${ctx.query.keywords}%` } },
+        { description: { [Op.like]: `%${ctx.query.keywords}%` } }
+      ];
+    }
+    if (ctx.state.user.isProjectOwner) {
+      query.where.userId = {
+        [Op.eq]: ctx.params.userID
+      };
+    } else {
+      query.where[Op.and] = [
+        { userId: { [Op.eq]: ctx.params.userID } },
+        { isPublic: { [Op.eq]: true } }
+      ];
     }
     try {
-      if (ctx.state.user.isProjectOwner) {
-        let { count, rows: projects } = await Project.findAndCountAll({
-          where: {
-            userId: {
-              [Op.eq]: ctx.params.userID
-            }
-          },
-          offset: queryOffset,
-          limit: queryLimit,
-          order: [['updated_at', 'DESC']]
-        });
-        ctx.body = {
-          success: true,
-          count,
-          projects: projects
-            && projects.map(_ => _.getFiltered()) || null
-        };
-      } else {
-        let { count, rows: projects } = await Project.findAndCountAll({
-          where: {
-            [Op.and]: [
-              { userId: ctx.params.userID },
-              { isPublic: true }
-            ]
-          },
-          offset: queryOffset,
-          limit: queryLimit,
-          order: [['updated_at', 'DESC']]
-        });
-        ctx.body = {
-          success: true,
-          count,
-          projects: projects
-            && projects.map(_ => _.getFiltered()) || null };
-      }
+      let { count, rows: projects } = await Project.findAndCountAll(query);
+      ctx.body = {
+        success: true,
+        count,
+        projects: projects
+          && projects.map(_ => _.getFiltered()) || null
+      };
     } catch (err) {
       ctx.throw(400, err);
     }
