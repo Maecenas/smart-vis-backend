@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'data_url'
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
     charset: 'utf8mb4',
@@ -44,6 +48,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
-  Data.prototype.filter = ['id', 'dataUrl', 'dimensions', 'created_at', 'updated_at'];
+  Data.prototype.filter = ['id', 'data', 'dataUrl', 'dimensions', 'created_at', 'updated_at'];
   return Data;
 };
