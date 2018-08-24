@@ -15,6 +15,7 @@ auth.post('signup', '/signup', async (ctx) => {
       ctx.body = { success: false, user: null, info: { msg: 'User already exists' } };
     } else {
       let user = await User.create(params);
+      ctx.login(user);
       ctx.body = { success: true, user: user.getFiltered() };
     }
   } catch (err) {
