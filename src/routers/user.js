@@ -34,14 +34,14 @@ user.get('/', async (ctx) => {
   })
   .patch('patchUser', '/:userID', async (ctx) => {
     try {
-      let [, affectedRows] = await User.update(ctx.request.body, {
+      let [affectedCount] = await User.update(ctx.request.body, {
         where: {
           id: {
             [Op.eq]: ctx.params.userID
           }
         }
       });
-      if (affectedRows === 1) {
+      if (affectedCount === 1) {
         ctx.body = { success: true };
         ctx.logout();
       } else {

@@ -66,14 +66,14 @@ bookmark.get('getBookmarks', '/', async (ctx) => {
       ctx.body = { success: false, msg: 'Not authorized' };
     }
     try {
-      let [, affectedRows] = await Bookmark.update(ctx.request.body, {
+      let [affectedCount] = await Bookmark.update(ctx.request.body, {
         where: {
           id: {
             [Op.eq]: ctx.params.bookmarkID
           }
         }
       });
-      if (affectedRows === 1) {
+      if (affectedCount === 1) {
         ctx.body = { success: true };
       } else {
         ctx.body = { success: false };

@@ -104,14 +104,14 @@ project.use('*', async (ctx, next) => {
       ctx.body = { success: false, msg: 'Not authorized' };
     }
     try {
-      let [, affectedRows] = await Project.update(ctx.request.body, {
+      let [affectedCount] = await Project.update(ctx.request.body, {
         where: {
           id: {
             [Op.eq]: ctx.params.projectID
           }
         }
       });
-      if (affectedRows === 1) {
+      if (affectedCount === 1) {
         ctx.body = { success: true };
       } else {
         ctx.body = { success: false };
