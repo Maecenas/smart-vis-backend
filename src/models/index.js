@@ -1,6 +1,6 @@
 'use strict';
 
-const { sequelize, sequelize: { Op } } = require('../controllers/db');
+const { sequelize, sequelize: { Op } } = require('../controllers/sequelize');
 const fp = require('../utils/functional');
 const User = sequelize.import(__dirname + '/user');
 const Project = sequelize.import(__dirname + '/project');

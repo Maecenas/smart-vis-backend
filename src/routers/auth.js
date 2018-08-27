@@ -2,26 +2,68 @@
 'use strict';
 
 const Router = require('koa-router');
+const mailer = require('../controllers/mailer');
 const passport = require('../controllers/auth');
+const redis = require('../controllers/redis');
 const { User, Op } = require('../models');
 
 const auth = new Router();
 
-auth.post('signup', '/signup', async (ctx) => {
-  try {
-    let params = ctx.request.body;
-    let foundUser = await User.findByMail(params.mail);
-    if (foundUser) {
-      ctx.body = { success: false, user: null, info: { msg: 'User already exists' } };
-    } else {
-      let user = await User.create(params);
-      ctx.login(user);
-      ctx.body = { success: true, user: user.getFiltered() };
+auth.post('signupMail', '/signup_mail',
+  async (ctx, next) => {
+    try {
+      let params = ctx.request.body;
+      let foundUser = await User.findByMail(params.mail);
+      if (foundUser) {
+        ctx.body = { success: false, user: null, info: { msg: 'User already exists' } };
+      } else {
+        await next();
+      }
+    } catch (err) {
+      ctx.throw(400, err);
     }
-  } catch (err) {
-    ctx.throw(400, err);
+  },
+  async (ctx) => {
+    let mail = ctx.request.body.mail;
+    let code;
+    let isQueuing = await redis.getAsync('signup:retry:' + mail);
+    if (!isQueuing) {
+      code = Math.random().toString(10).slice(-6);
+      await Promise.all([
+        redis.setAsync('signup:' + mail, code, 'EX', 600),
+        redis.setAsync('signup:retry:' + mail, code, 'EX', 60)
+      ]);
+    }
+    try {
+      let res = await mailer.sendAuth({
+        mail,
+        code
+      });
+      if (res.startsWith('2')) {
+        ctx.body = { success: true, info: res };
+      } else {
+        ctx.body = { success: false, info: res };
+      }
+    } catch (err) {
+      throw err;
+    }
   }
-})
+)
+  .post('signup', '/signup', async (ctx) => {
+    let params = ctx.request.body;
+    let code = await redis.getAsync('signup:' + params.mail);
+    if (params.code !== code) {
+      ctx.body = { success: false, info: { msg: 'Incorrect verification code' } };
+    } else {
+      try {
+        let user = await User.create(params);
+        ctx.login(user);
+        ctx.body = { success: true, user: user.getFiltered() };
+      } catch (err) {
+        ctx.throw(400, err);
+      }
+    }
+  })
   .post('login', '/login', (ctx, next) => {
     if (ctx.isAuthenticated()) {
       ctx.body = {
@@ -63,6 +105,70 @@ auth.post('signup', '/signup', async (ctx) => {
         ctx.status = 201;
       }
       return await ctx.login(user);
+    } catch (err) {
+      ctx.throw(400, err);
+    }
+  })
+  .post('resetPasswordMail', '/reset_password_mail',
+    async (ctx, next) => {
+      try {
+        let params = ctx.request.body;
+        let foundUser = await User.findByMail(params.mail);
+        if (!foundUser) {
+          ctx.body = { success: false, user: null, info: { msg: 'User not exists' } };
+        } else {
+          await next();
+        }
+      } catch (err) {
+        ctx.throw(400, err);
+      }
+    },
+    async (ctx) => {
+      let mail = ctx.request.body.mail;
+      let code;
+      let isQueuing = await redis.getAsync('reset:retry:' + mail);
+      if (!isQueuing) {
+        code = Math.random().toString(10).slice(-6);
+        await Promise.all([
+          redis.setAsync('reset:' + mail, code, 'EX', 600),
+          redis.setAsync('reset:retry:' + mail, code, 'EX', 60)
+        ]);
+      }
+      try {
+        let res = await mailer.sendAuth({
+          mail,
+          code
+        });
+        if (res.startsWith('2')) {
+          ctx.body = { success: true, info: res };
+        } else {
+          ctx.body = { success: false, info: res };
+        }
+      } catch (err) {
+        throw err;
+      }
+    }
+  )
+  .post('resetPassword', '/reset_password', async (ctx) => {
+    let params = ctx.request.body;
+    let code = await redis.getAsync('signup:' + params.mail);
+    if (params.code !== code) {
+      ctx.body = { success: false, info: { msg: 'Incorrect verification code' } };
+      return ctx;
+    }
+    try {
+      let [affectedCount] = await User.update(ctx.request.body, {
+        where: {
+          id: {
+            [Op.eq]: ctx.params.userID
+          }
+        }
+      });
+      if (affectedCount === 1) {
+        ctx.body = { success: true };
+      } else {
+        ctx.body = { success: false };
+      }
     } catch (err) {
       ctx.throw(400, err);
     }
