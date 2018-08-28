@@ -4,6 +4,7 @@ docker-compose*.yml
 .dockerignore
 nginx*
 config
+**/*.md
 *.log
 logs
 log

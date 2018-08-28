@@ -1,7 +1,9 @@
-version: "3"
+version: "3.4"
 services:
   node:
-    build: .
+    build:
+      context: .
+      target: production
     image: registry.cn-hangzhou.aliyuncs.com/smartvis/smartvis-backend:alpine
     restart: always
     volumes:

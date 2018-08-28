@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 services:
   db:
     image: mysql:5.7
@@ -13,7 +13,9 @@ services:
       MYSQL_USER: smartvis
       MYSQL_PASSWORD: smartvis
   node:
-    build: .
+    build:
+      context: .
+      target: production
     image: registry.cn-hangzhou.aliyuncs.com/smartvis/smartvis-backend:alpine
     restart: always
     volumes:
