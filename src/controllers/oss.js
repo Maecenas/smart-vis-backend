@@ -2,6 +2,7 @@
 'use strict';
 
 const OSS = require('ali-oss');
+const redis = require('../controllers/redis');
 const { oss } = require('../../config/default');
 
 /**
@@ -93,9 +94,14 @@ function getProjectPolicy(userID, projectID, options = {}) {
 
 OSS.STS.prototype.grantUser = async function ({ userID, options = {} } = {}) {
   try {
-    const policy = getUserPolicy(userID, options);
-    const sessionName = userID.replace(/-/g, '');
-    return await stsClient.assumeRole(oss.sts.ROLE_ARN, policy, options.timeout = 3600, sessionName);
+    let response = JSON.parse(await redis.getAsync('token:' + userID));
+    if (!response) {
+      const policy = getUserPolicy(userID, options);
+      const sessionName = userID.replace(/-/g, '');
+      response = await stsClient.assumeRole(oss.sts.ROLE_ARN, policy, options.timeout = 3600, sessionName);
+      await redis.setAsync('token:' + userID, JSON.stringify(response), 'EX', 1800);
+    }
+    return response;
   } catch (err) {
     throw new Error(err.message);
   }
@@ -103,10 +109,14 @@ OSS.STS.prototype.grantUser = async function ({ userID, options = {} } = {}) {
 
 OSS.STS.prototype.grantProject = async function ({ userID, projectID, options = {} } = {}) {
   try {
-    const policy = getProjectPolicy(userID, projectID, options);
-    // TODO: Add public Project AccessToken cache
-    const sessionName = projectID.replace(/-/g, '');
-    return await stsClient.assumeRole(oss.sts.ROLE_ARN, policy, options.timeout = 3600, sessionName);
+    let response = JSON.parse(await redis.getAsync('token:' + projectID));
+    if (!response) {
+      const policy = getProjectPolicy(userID, projectID, options);
+      const sessionName = projectID.replace(/-/g, '');
+      response = await stsClient.assumeRole(oss.sts.ROLE_ARN, policy, options.timeout = 3600, sessionName);
+      await redis.setAsync('token:' + projectID, JSON.stringify(response), 'EX', 1800);
+    }
+    return response;
   } catch (err) {
     throw new Error(err.message);
   }
