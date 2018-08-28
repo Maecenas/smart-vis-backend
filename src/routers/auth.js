@@ -25,16 +25,17 @@ auth.post('signupMail', '/signup_mail',
   },
   async (ctx) => {
     let mail = ctx.request.body.mail;
-    let code;
-    let isQueuing = await redis.getAsync('signup:retry:' + mail);
-    if (!isQueuing) {
-      code = Math.random().toString(10).slice(-6);
+    try {
+      let isQueuing = await redis.getAsync('signup:retry:' + mail);
+      if (isQueuing) {
+        ctx.body = { success: false, info: 'Frequent request' };
+        return ctx;
+      }
+      let code = Math.random().toString(10).slice(-6);
       await Promise.all([
         redis.setAsync('signup:' + mail, code, 'EX', 600),
         redis.setAsync('signup:retry:' + mail, code, 'EX', 60)
       ]);
-    }
-    try {
       let res = await mailer.sendAuth({
         mail,
         code
@@ -125,16 +126,17 @@ auth.post('signupMail', '/signup_mail',
     },
     async (ctx) => {
       let mail = ctx.request.body.mail;
-      let code;
-      let isQueuing = await redis.getAsync('reset:retry:' + mail);
-      if (!isQueuing) {
-        code = Math.random().toString(10).slice(-6);
+      try {
+        let isQueuing = await redis.getAsync('reset:retry:' + mail);
+        if (isQueuing) {
+          ctx.body = { success: false, info: 'Frequent request' };
+          return ctx;
+        }
+        let code = Math.random().toString(10).slice(-6);
         await Promise.all([
           redis.setAsync('reset:' + mail, code, 'EX', 600),
           redis.setAsync('reset:retry:' + mail, code, 'EX', 60)
         ]);
-      }
-      try {
         let res = await mailer.sendAuth({
           mail,
           code
@@ -151,19 +153,23 @@ auth.post('signupMail', '/signup_mail',
   )
   .post('resetPassword', '/reset_password', async (ctx) => {
     let params = ctx.request.body;
-    let code = await redis.getAsync('signup:' + params.mail);
+    let code = await redis.getAsync('reset:' + params.mail);
     if (params.code !== code) {
       ctx.body = { success: false, info: { msg: 'Incorrect verification code' } };
       return ctx;
     }
     try {
-      let [affectedCount] = await User.update(ctx.request.body, {
-        where: {
-          id: {
-            [Op.eq]: ctx.params.userID
+      let [affectedCount] = await User.update(
+        {
+          password: params.password
+        },
+        {
+          where: {
+            mail: {
+              [Op.eq]: params.mail
+            }
           }
-        }
-      });
+        });
       if (affectedCount === 1) {
         ctx.body = { success: true };
       } else {
