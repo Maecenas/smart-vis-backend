@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable no-shadow,consistent-return */
 'use strict';
 
 const Router = require('koa-router');
@@ -35,6 +35,7 @@ bookmark.get('getBookmarks', '/', async (ctx) => {
   .post('postBookmark', '/', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let params = ctx.request.body;
@@ -64,6 +65,7 @@ bookmark.get('getBookmarks', '/', async (ctx) => {
   .patch('patchBookmark', '/:bookmarkID', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let [affectedCount] = await Bookmark.update(ctx.request.body, {
@@ -85,6 +87,7 @@ bookmark.get('getBookmarks', '/', async (ctx) => {
   .delete('deleteBookmark', '/:bookmarkID', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let affectedRows = await Bookmark.destroy({

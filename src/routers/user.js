@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable no-shadow,consistent-return */
 'use strict';
 
 const Router = require('koa-router');
@@ -71,32 +71,32 @@ user.get('/', async (ctx) => {
       ctx.throw(400, err);
     }
   })
-  .get('getUserToken', '/:userID/token', async function (ctx) {
+  .get('getUserToken', '/:userID/token', async (ctx) => {
     if (ctx.state.user.id !== ctx.params.userID) {
       ctx.body = { success: false, msg: 'Not authorized' };
-    } else {
-      try {
-        let response = await client.grantUser({
-          userID: ctx.params.userID,
-          options: ctx.request.body
-        });
-        if (response) {
-          ctx.body = {
-            success: true,
-            accessToken: response.credentials,
-            oss: {
-              region: oss.REGION,
-              bucket: oss.BUCKET,
-              roleArn: oss.sts.ROLE_ARN
-            }
-          };
-        } else {
-          ctx.body = { success: false, msg: 'Unknown Error' };
-          console.log('[ERR]', response);
-        }
-      } catch (err) {
-        ctx.throw(400, err);
+      return ctx;
+    }
+    try {
+      let response = await client.grantUser({
+        userID: ctx.params.userID,
+        options: ctx.request.body
+      });
+      if (response) {
+        ctx.body = {
+          success: true,
+          accessToken: response.credentials,
+          oss: {
+            region: oss.REGION,
+            bucket: oss.BUCKET,
+            roleArn: oss.sts.ROLE_ARN
+          }
+        };
+      } else {
+        ctx.body = { success: false, msg: 'Unknown Error' };
+        console.log('[ERR]', response);
       }
+    } catch (err) {
+      ctx.throw(400, err);
     }
   });
 

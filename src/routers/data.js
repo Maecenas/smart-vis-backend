@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable no-shadow,consistent-return */
 'use strict';
 
 const Router = require('koa-router');
@@ -29,6 +29,7 @@ data.get('getData', '/', async (ctx) => {
   .post('postDatum', '/', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let params = ctx.request.body;
@@ -50,6 +51,7 @@ data.get('getData', '/', async (ctx) => {
         };
       } else {
         ctx.body = { success: false };
+        return ctx;
       }
     } catch (err) {
       ctx.throw(400, err);
@@ -58,6 +60,7 @@ data.get('getData', '/', async (ctx) => {
   .delete('deleteDatum', '/:dataID', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let affectedRows = await Data.destroy({

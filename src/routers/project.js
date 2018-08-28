@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable no-shadow,consistent-return */
 'use strict';
 
 const Router = require('koa-router');
@@ -63,6 +63,7 @@ project.use('*', async (ctx, next) => {
   .post('postProject', '/', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let params = ctx.request.body;
@@ -102,6 +103,7 @@ project.use('*', async (ctx, next) => {
   .patch('patchProject', '/:projectID', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let [affectedCount] = await Project.update(ctx.request.body, {
@@ -123,6 +125,7 @@ project.use('*', async (ctx, next) => {
   .delete('deleteProject', '/:projectID', async (ctx) => {
     if (!ctx.state.user.isProjectOwner) {
       ctx.body = { success: false, msg: 'Not authorized' };
+      return ctx;
     }
     try {
       let affectedRows = await Project.destroy({
@@ -141,14 +144,16 @@ project.use('*', async (ctx, next) => {
       ctx.throw(400, err);
     }
   })
-  .get('getProjectToken', '/:projectID/token', async function (ctx) {
+  .get('getProjectToken', '/:projectID/token', async (ctx) => {
     try {
       let project = await Project.findById(ctx.params.projectID);
       if (!project) {
         ctx.body = { success: false, msg: 'Invalid projectID' };
+        return ctx;
       }
       if (!ctx.state.user.isProjectOwner && !project.isPublic) {
         ctx.body = { success: false, msg: 'Not authorized' };
+        return ctx;
       }
       let response = await client.grantProject({
         userID: ctx.params.userID,
