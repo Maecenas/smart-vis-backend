@@ -10,6 +10,8 @@ services:
       - ./config:/usr/src/app/config:ro
     ports:
       - 8080:8080
+    depends_on:
+      - influxdb
   nginx:
     image: nginx:alpine
     restart: always
@@ -18,3 +20,10 @@ services:
     ports:
       - 80:80
       - 443:443
+  influxdb:
+    image: influxdb:alpine
+    restart: always
+    volumes:
+      - ~/databases/smartvis/influxdb:/var/lib/influxdb
+    ports:
+      - 8086:8086
