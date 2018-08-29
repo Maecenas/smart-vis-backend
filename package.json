@@ -12,6 +12,7 @@
     "koa-passport": "^4.1.0",
     "koa-router": "^7.4.0",
     "koa-session": "^5.8.2",
+    "mongoose": "^5.2.9",
     "mysql2": "^1.6.1",
     "passport-local": "^1.0.0",
     "sequelize": "^4.38.0"
