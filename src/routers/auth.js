@@ -92,7 +92,7 @@ auth.post('signupMail', '/signup_mail',
       let params = ctx.request.body;
       // Must explicitly define and pass { password: null } to Model.create() or save()
       // for Sequelize's model validation would conflict with and overlay field setter
-      params.password = params.password || null;
+      params.password = params.password || '';
       let [user, created] = await User.findOrCreate({
         where: {
           microsoftId: {
@@ -107,7 +107,7 @@ auth.post('signupMail', '/signup_mail',
       }
       return await ctx.login(user);
     } catch (err) {
-      ctx.throw(400, err);
+      ctx.body = { success: false, info: { msg: err.original.message || err.message || err } };
     }
   })
   .post('resetPasswordMail', '/reset_password_mail',
