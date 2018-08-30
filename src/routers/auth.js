@@ -3,6 +3,7 @@
 
 const Router = require('koa-router');
 const mailer = require('../controllers/mailer');
+mailer.initialize();
 const passport = require('../controllers/auth');
 const redis = require('../controllers/redis');
 const { User, Op } = require('../models');

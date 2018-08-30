@@ -1,17 +1,5 @@
 version: "3.4"
 services:
-  db:
-    image: mysql:5.7
-    restart: always
-    volumes:
-      - ~/databases/smartvis/mysql:/var/lib/mysql
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: smartvis
-      MYSQL_USER: smartvis
-      MYSQL_PASSWORD: smartvis
   node:
     build:
       context: .
@@ -23,7 +11,9 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - db
+      - mysql
+      - redis
+      - mongo
       - influxdb
   nginx:
     image: nginx:alpine
@@ -33,10 +23,38 @@ services:
     ports:
       - 80:80
       - 443:443
+  mysql:
+    image: mysql:5.7
+    restart: always
+    volumes:
+      - ~/databases/smartvis/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: smartvis
+      MYSQL_USER: smartvis
+      MYSQL_PASSWORD: smartvis
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ~/databases/smartvis/mongo/db:/data/db
+      - ~/databases/smartvis/mongo/configdb:/data/configdb
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
   influxdb:
     image: influxdb:alpine
     restart: always
     volumes:
-      - ~/databases/smartvis/influxdb:/var/lib/influxdb
+    - ~/databases/smartvis/influxdb:/var/lib/influxdb
     ports:
-      - 8086:8086
+    - 8086:8086

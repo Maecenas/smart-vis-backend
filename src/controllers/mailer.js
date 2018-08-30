@@ -1,37 +1,50 @@
+/* eslint-disable no-shadow */
 'use strict';
 
 const nodemailer = require('nodemailer');
-const { mailer } = require('../../config/default');
+const { mail } = require('../../config/default');
 
-const transporter = nodemailer.createTransport({
-  host: mailer.HOST,
-  port: mailer.PORT,
-  secure: mailer.SECURE,
-  auth: {
-    user: mailer.USER,
-    pass: mailer.PASSWORD
+let mailer = {
+  initialize: () => {
+    // Generate test SMTP service account from ethereal.email
+    // Only needed if you don't have a real mail account for testing
+    (() => {
+      if (!mail.PASSWORD) {
+        return nodemailer.createTestAccount()
+          .then(account => ({ user: mail.USER, pass: mail.PASSWORD } = account));
+      }
+      return Promise.resolve();
+    })()
+      .then(() => {
+        const transporter = nodemailer.createTransport({
+          host: mail.HOST,
+          port: mail.PORT,
+          secure: mail.SECURE,
+          auth: {
+            user: mail.USER,
+            pass: mail.PASSWORD
+          }
+        });
+        const mailOptions = {
+          from: `"${mail.USERNAME}" <${mail.USER}>`
+        };
+        mailer.sendAuth = async function ({ mail, code }) {
+          let options = {
+            ...mailOptions,
+            to: mail,
+            subject: 'Confirm Your Account on Vis',
+            html: `Your verification code on Vis is <b>${code}</b>. This will expire in 10 minutes.`
+          };
+          try {
+            let info = await transporter.sendMail(options);
+            console.log(`Message <${code}> sent to <${mail}>: ${info.messageId}`);
+            return info.response;
+          } catch (err) {
+            throw err;
+          }
+        };
+      });
   }
-});
-const mailOptions = {
-  from: `"${mailer.USERNAME}" <${mailer.USER}>`
 };
 
-async function sendAuth({ mail, code }) {
-  let options = {
-    ...mailOptions,
-    to: mail,
-    subject: 'Confirm Your Account on Vis',
-    html: `Your verification code on Vis is <b>${code}</b>. This will expire in 10 minutes.`
-  };
-  try {
-    let info = await transporter.sendMail(options);
-    console.log('Message sent: %s', info.messageId);
-    return info.response;
-  } catch (err) {
-    throw err;
-  }
-}
-
-module.exports = {
-  sendAuth
-};
+module.exports = mailer;
