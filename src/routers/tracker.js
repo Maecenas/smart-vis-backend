@@ -22,6 +22,7 @@ tracker.all('requireLogin', '*', async (ctx, next) => {
       let activities = params.activities.map(activity => ({
         userid: ctx.state.user.id,
         projectid: params.projectid,
+        component: params.component,
         time: new Date(Number.parseInt(activity.time, 10)),
         taxonomy: activity.taxonomy,
         type: activity.type,

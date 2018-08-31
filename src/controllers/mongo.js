@@ -14,12 +14,13 @@ db.once('open', function(){
 });
 
 const activitySchema = new Schema({
-    userid: String,
-    projectid: String,
-    time: { type: Date, default: Date.now },
-    taxonomy: String,
-    type: String,
-    parameter: String
+  userid: String,
+  projectid: String,
+  component: String,
+  time: { type: Date, default: Date.now },
+  taxonomy: String,
+  type: String,
+  parameter: String
 });
 const Activity = mongoose.model('Activity', activitySchema);
 

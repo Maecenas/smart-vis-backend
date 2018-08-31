@@ -12,6 +12,7 @@ const influx = new Influx.InfluxDB({
       fields: {
         userid: Influx.FieldType.STRING,
         projectid: Influx.FieldType.STRING,
+        component: Influx.FieldType.STRING,
         taxonomy: Influx.FieldType.STRING,
         type: Influx.FieldType.STRING,
         parameter: Influx.FieldType.STRING
