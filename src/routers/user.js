@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow,consistent-return */
+/* eslint-disable no-shadow,consistent-return,no-console */
 'use strict';
 
 const Router = require('koa-router');

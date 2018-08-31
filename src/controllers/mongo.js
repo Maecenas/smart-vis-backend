@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict';
 
 const { mongodb } = require('../../config/default');
@@ -6,11 +7,11 @@ const Schema = mongoose.Schema;
 mongoose.connect(mongodb.CONNECTION_URI, { useNewUrlParser: true });
 
 let db = mongoose.connection;
-db.on('error', function(){
-    console.log('Mongodb Connection Error!');
+db.on('error', function () {
+  console.log('Mongodb Connection Error!');
 });
-db.once('open', function(){
-    console.log('Mongodb Connection Success!');
+db.once('open', function () {
+  console.log('Mongodb Connection Success!');
 });
 
 const activitySchema = new Schema({
@@ -24,4 +25,4 @@ const activitySchema = new Schema({
 });
 const Activity = mongoose.model('Activity', activitySchema);
 
-module.exports = { Activity }
+module.exports = { Activity };

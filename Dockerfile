@@ -17,6 +17,15 @@ RUN npm set progress=false \
   && npm cache clean --force
 
 #
+# ---- Test ----
+# run linters, setup and tests
+FROM dependencies AS test
+COPY . .
+RUN npm install \
+  && npm cache clean --force
+ENTRYPOINT [ "sh", "-c", "npm run lint && npm run test"]
+
+#
 # ---- Production ----
 FROM dependencies AS production
 # Bundle app source

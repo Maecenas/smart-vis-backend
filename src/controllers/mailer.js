@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow */
+/* eslint-disable no-shadow,no-console */
 'use strict';
 
 const nodemailer = require('nodemailer');

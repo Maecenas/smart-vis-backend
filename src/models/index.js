@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict';
 
 const { sequelize, sequelize: { Op } } = require('../controllers/sequelize');

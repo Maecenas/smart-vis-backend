@@ -10,7 +10,7 @@
   "plugins": [
   ],
   "parserOptions": {
-    "ecmaVersion": 8,
+    "ecmaVersion": 9,
     "ecmaFeatures": {
       "arrowFunctions": true,
       "binaryLiterals": true,
@@ -18,7 +18,6 @@
       "classes": true,
       "defaultParams": true,
       "destructuring": true,
-      "experimentalObjectRestSpread": true,
       "forOf": true,
       "generators": true,
       "globalReturn": true,
