@@ -26,14 +26,6 @@ app.use(sessionWare({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Log HTTP request
-app.use(async (ctx, next) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  console.log(`${ctx.method} ${ctx.status} ${ctx.url} - ${ms} ms`);
-});
-
 // Add router
 app.use(router.routes());
 app.use(router.allowedMethods());
