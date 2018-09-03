@@ -5,6 +5,7 @@ const Router = require('koa-router');
 const { Project, Op } = require('../models');
 const { stsClient: client } = require('../controllers/oss');
 const { oss } = require('../../config/default');
+const limit = 8;
 
 const project = new Router({
   prefix: '/project'
@@ -16,15 +17,7 @@ project.use('*', async (ctx, next) => {
 })
   .get('getProjects', '/', async (ctx) => {
     let page = Math.max(Number.parseInt(ctx.query.page, 10) || 0, 1);
-    let offset;
-    let limit;
-    if (page !== 1) {
-      offset = page * 8 - 9;
-      limit = 8;
-    } else {
-      offset = 0;
-      limit = 7;
-    }
+    let offset = (page - 1) * limit;
     let query = {
       where: {
       },
