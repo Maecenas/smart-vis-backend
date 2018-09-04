@@ -23,17 +23,17 @@ Project.hasMany(Bookmark, { constraints: false });
   try {
     if (sequelize.config.database.match(/_test$/)) {
       await sequelize.sync({ force: true });
+      let alterQueries = [
+        'ALTER TABLE `bookmark` MODIFY `project_id` CHAR(36) NOT NULL',
+        'ALTER TABLE `data` MODIFY `project_id` CHAR(36) NOT NULL',
+        'ALTER TABLE `project` MODIFY `user_id` CHAR(36) NOT NULL'
+      ].map(query => {
+        sequelize.query(query);
+      });
+      await Promise.all(alterQueries);
     } else {
       await sequelize.sync({ force: false });
     }
-    let alterQueries = [
-      'ALTER TABLE `bookmark` MODIFY `project_id` CHAR(36) BINARY NOT NULL',
-      'ALTER TABLE `data` MODIFY `project_id` CHAR(36) BINARY NOT NULL',
-      'ALTER TABLE `project` MODIFY `user_id` CHAR(36) BINARY NOT NULL'
-    ].map(query => {
-      sequelize.query(query);
-    });
-    await Promise.all(alterQueries);
   } catch (err) {
     console.log(err);
     process.exit(1);
