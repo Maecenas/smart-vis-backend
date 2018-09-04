@@ -17,18 +17,25 @@ RUN npm set progress=false \
   && npm cache clean --force
 
 #
-# ---- Test ----
-# run linters, setup and tests
-FROM dependencies AS test
-COPY . .
-RUN npm install \
-  && npm cache clean --force
-ENTRYPOINT [ "sh", "-c", "npm run lint && npm run test"]
-
-#
 # ---- Production ----
 FROM dependencies AS production
 # Bundle app source
 COPY . .
 EXPOSE 8080
 CMD [ "npm", "start" ]
+
+#
+# ---- DevelopmentDependencies ----
+FROM base AS devDependencies
+# Install app devDependencies
+RUN npm set progress=false \
+  && npm config set depth 0 \
+  && npm install \
+  && npm cache clean --force
+
+#
+# ---- Test ----
+# run linters, setup and tests
+FROM devDependencies AS test
+COPY . .
+CMD npm run lint && npm run test
