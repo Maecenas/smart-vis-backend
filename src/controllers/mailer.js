@@ -1,4 +1,4 @@
-/* eslint-disable no-shadow,no-console */
+/* eslint-disable no-shadow,no-console,max-len */
 'use strict';
 
 const nodemailer = require('nodemailer');
@@ -32,8 +32,8 @@ let mailer = {
           let options = {
             ...mailOptions,
             to: mail,
-            subject: 'Confirm Your Account on Vis',
-            html: `Your verification code on Vis is <b>${code}</b>. This will expire in 10 minutes.`
+            subject: 'Confirm Your Account on SmartVis',
+            html: `Your verification code on SmartVis is <b>${code}</b>. This will expire in 10 minutes.`
           };
           try {
             let info = await transporter.sendMail(options);
