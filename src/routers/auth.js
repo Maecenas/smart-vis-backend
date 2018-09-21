@@ -77,7 +77,7 @@ auth.post('signupMail', '/signup_mail',
     }
     return passport.authenticate('local', async (err, user, info) => {
       if (!user) {
-        ctx.body = { success: false, info: info, user: null };
+        ctx.body = { success: false, info: { msg: info.msg || info.message }, user: null };
         return ctx;
       }
       ctx.body = { success: true, user: user.getFiltered() };
