@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 'use strict';
 
-const { mongodb } = require('../../config/default');
+const { mongodb } = require('../../config');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 mongoose.connect(mongodb.CONNECTION_URI, { useNewUrlParser: true });

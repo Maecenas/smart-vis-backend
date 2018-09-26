@@ -2,7 +2,7 @@
 
 const Router = require('koa-router');
 const { influx } = require('../controllers/influxdb');
-const { influxdb } = require('../../config/default');
+const { influxdb } = require('../../config');
 const { Activity } = require('../controllers/mongo');
 
 const tracker = new Router();

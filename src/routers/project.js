@@ -4,7 +4,7 @@
 const Router = require('koa-router');
 const { Project, Op } = require('../models');
 const { stsClient: client } = require('../controllers/oss');
-const { oss } = require('../../config/default');
+const { oss } = require('../../config');
 const limit = 8;
 
 const project = new Router({

@@ -4,7 +4,7 @@
 const Promise = require('bluebird');
 const Redis = require('redis');
 Promise.promisifyAll(Redis);
-const { redis } = require('../../config/default');
+const { redis } = require('../../config');
 
 const client = Redis.createClient(
   redis.PORT,

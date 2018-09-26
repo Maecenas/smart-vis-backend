@@ -1,7 +1,3 @@
-# Configs
-config
-!**/*config/default.js
-
 # Logs
 logs
 npm-debug.log*

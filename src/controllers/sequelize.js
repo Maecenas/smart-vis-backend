@@ -2,7 +2,7 @@
 'use strict';
 
 const Sequelize = require('sequelize');
-const { database: db } = require('../../config/default');
+const { database: db } = require('../../config');
 
 /**
  * Database connection and pool configuration

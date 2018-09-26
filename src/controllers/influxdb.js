@@ -2,7 +2,7 @@
 'use strict';
 
 const Influx = require('influx');
-const { influxdb } = require('../../config/default');
+const { influxdb } = require('../../config');
 
 const influx = new Influx.InfluxDB({
   host: influxdb.HOST,

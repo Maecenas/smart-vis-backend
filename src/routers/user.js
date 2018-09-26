@@ -4,7 +4,7 @@
 const Router = require('koa-router');
 const { User, Op } = require('../models');
 const { stsClient: client } = require('../controllers/oss');
-const { oss } = require('../../config/default');
+const { oss } = require('../../config');
 
 const user = new Router({
   prefix: '/user'

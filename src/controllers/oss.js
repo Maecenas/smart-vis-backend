@@ -3,7 +3,7 @@
 
 const OSS = require('ali-oss');
 const redis = require('../controllers/redis');
-const { oss } = require('../../config/default');
+const { oss } = require('../../config');
 
 /**
  * Create a new Aliyun OSS connection client

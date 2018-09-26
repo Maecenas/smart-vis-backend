@@ -2,7 +2,7 @@
 'use strict';
 
 const nodemailer = require('nodemailer');
-const { mail } = require('../../config/default');
+const { mail } = require('../../config');
 
 let mailer = {
   initialize: () => {
