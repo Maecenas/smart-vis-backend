@@ -1,0 +1,31 @@
+sudo: required
+
+before_cache:
+  # Save tagged docker images
+  - >
+    mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+    | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
+
+before_install:
+  # Load cached docker images
+  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+
+cache:
+  bundler: true
+  directories:
+  - $HOME/docker
+
+services:
+- docker
+
+script:
+  - docker build --target=test -t smartvis-server:test . && docker run --rm smartvis-server:test
+
+deploy:
+  provider: script
+  script: bash -c "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin ${DOCKER_REGISTRY} && docker-compose build && docker-compose push"
+  on:
+    branch: master
+
+notifications:
+  webhooks: https://www.travisbuddy.com/
