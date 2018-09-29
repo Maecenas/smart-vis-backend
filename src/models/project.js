@@ -28,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING
     },
+    thumbnail: {
+      type: DataTypes.TEXT
+    },
     state: {
       type: DataTypes.TEXT
     },
@@ -51,6 +54,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     underscored: true
   });
-  Project.prototype.filter = ['id', 'component', 'title', 'description', 'state', 'isPublic', 'created_at', 'updated_at'];
+  Project.prototype.filter = ['id', 'component', 'title', 'description', 'thumbnail', 'state', 'isPublic', 'created_at', 'updated_at'];
   return Project;
 };
